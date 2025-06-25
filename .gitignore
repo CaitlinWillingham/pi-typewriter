@@ -1,0 +1,991 @@
+## Me
+how do I import curses?
+
+## AI Assistant
+I notice you're working with code that uses the `curses` library. To import curses in Python, simply use:
+
+```python
+import curses
+```
+
+
+However, there are a couple of important things to note:
+
+1. On Windows, the standard `curses` module is not available by default. You'll need to install `windows-curses` first using pip:
+```shell script
+pip install windows-curses
+```
+
+
+2. On Unix-like systems (Linux, macOS), `curses` is part of the Python standard library and no additional installation is needed.
+
+After importing, you can use curses to create text-based user interfaces, as shown in your flight booker example. Remember that curses applications typically need to be run within a curses wrapper to properly initialize and clean up the terminal. For example:
+
+```python
+import curses
+
+def main(stdscr):
+    # your curses code here
+    pass
+
+if __name__ == '__main__':
+    curses.wrapper(main)
+```
+
+
+The `curses.wrapper()` function ensures that your terminal will be restored to its original state even if your program crashes.
+
+Let me know if you need help with any specific curses functionality!
+
+## Me
+do I need to do this inside the virtual environment?
+
+## AI Assistant
+Let me check the current Python environment requirements.Yes, you should install the `windows-curses` package inside your virtual environment if you're using one. This ensures that:
+
+1. The package is isolated to your project and won't affect other Python projects
+2. The package version matches your project's requirements
+3. You avoid potential conflicts with packages installed globally
+
+To install it in your virtual environment:
+
+1. First make sure your virtual environment is activated. You should see the virtual environment name in your terminal prompt, typically in parentheses like `(venv)` or similar.
+
+2. Then run:
+```shell script
+pip install windows-curses
+```
+
+
+If you haven't created a virtual environment yet, you can create one using:
+```shell script
+python -m venv venv
+```
+
+
+And activate it:
+- On Windows:
+```shell script
+.\venv\Scripts\activate
+```
+
+- On Unix/MacOS:
+```shell script
+source venv/bin/activate
+```
+
+
+After installation, you can verify it's installed correctly by running:
+```shell script
+pip list
+```
+
+
+You should see `windows-curses` in the list of installed packages.
+
+## Me
+ok its installed... now  if I plan on running this code on a raspberry pi, will I need to preinstall anything?
+
+## AI Assistant
+No, you won't need to preinstall anything special for the curses functionality on a Raspberry Pi. This is because:
+
+1. Raspberry Pi runs Linux (typically Raspberry Pi OS, which is based on Debian)
+2. On Linux systems, `curses` is included in Python's standard library
+3. The `windows-curses` package is only needed for Windows systems
+
+So your code will work out of the box on the Raspberry Pi as long as Python is installed (which it usually is by default on Raspberry Pi OS).
+
+The only thing you might want to ensure is that you're using a compatible terminal emulator that supports UTF-8 for the special characters in your code (like the "✈" airplane emoji). The default terminal on Raspberry Pi OS should handle this fine.
+
+If you're going to deploy this code on both Windows and Raspberry Pi, you might want to add a platform check in your code to handle the different environments:
+
+```python
+import sys
+import curses
+
+if sys.platform == "win32":
+    # Windows-specific setup if needed
+    pass
+else:
+    # Linux/Raspberry Pi specific setup if needed
+    pass
+```
+
+
+But for your current code, no special handling is needed - it will just work on the Raspberry Pi.
+
+## Me
+how do I run this from the terminall?
+
+## AI Assistant
+To run this from the terminal, navigate to the directory containing `main.py` and run:
+
+```shell script
+python main.py
+```
+
+
+If you're using a virtual environment (which you should be), make sure it's activated first. So the complete sequence would be:
+
+1. First activate your virtual environment:
+   - On Windows:
+```shell script
+.\venv\Scripts\activate
+```
+
+   - On Linux/MacOS/Raspberry Pi:
+```shell script
+source venv/bin/activate
+```
+
+
+2. Then run the program:
+```shell script
+python main.py
+```
+
+
+You should see the curses interface appear in your terminal with the menu showing "TYPEWRITER - Choose an app:" and the available options. You can select options using number keys, and press 'Q' to quit.
+
+Note: Make sure you're running this in a full terminal window, not in PyCharm's integrated terminal, as curses applications need a proper terminal environment to work correctly.
+
+## Me
+NameError: name 'curses' is not defined. Did you forget to import 'curses'?
+
+
+## AI Assistant
+Ah, I see the issue. In your `flightbooker.py`, you're using `curses` but haven't imported it. You need to add the import statement at the top of `flightbooker.py`:
+
+```python
+import curses
+
+name = "Flight Booker"
+
+def run(stdscr):
+    stdscr.clear()
+    stdscr.addstr(0, 0, "✈ Welcome to Pretend Airlines!\n")
+    stdscr.addstr(1, 0, "Where would you like to go? ")
+    stdscr.refresh()
+    curses.echo()
+    dest = stdscr.getstr(2, 0, 20).decode('utf-8')
+
+    stdscr.addstr(4, 0, f"Booking your flight to {dest}... ✈ Done!\n")
+    stdscr.refresh()
+    curses.noecho()
+```
+
+
+After adding the import statement, try running the program again and it should work properly. Each Python file needs its own imports, even if the module is already imported in other files that use this one.
+
+## Me
+Now I need to move this to my raspberry pi
+
+## AI Assistant
+Here are the steps to move and run your code on a Raspberry Pi:
+
+1. **Transfer the files**
+   You have several options:
+
+   - Using SCP (Secure Copy):
+```shell script
+scp main.py flightbooker.py pi@<raspberry-pi-ip>:/path/to/destination
+```
+
+   Replace `<raspberry-pi-ip>` with your Pi's IP address.
+
+   - Using Git (if your code is in a repository):
+```shell script
+# On your Raspberry Pi
+   git clone <your-repository-url>
+```
+
+
+   - Using a USB drive
+   - Using SFTP with a file manager
+   - Using Visual Studio Code's Remote SSH extension
+
+2. **Connect to your Raspberry Pi**
+   If you're not directly using the Pi's screen/keyboard:
+```shell script
+ssh pi@<raspberry-pi-ip>
+```
+
+
+3. **On the Raspberry Pi**:
+```shell script
+# Create a virtual environment (optional but recommended)
+   python3 -m venv venv
+
+   # Activate the virtual environment
+   source venv/bin/activate
+
+   # Run the program
+   python main.py
+```
+
+
+To find your Raspberry Pi's IP address (if you don't know it), you can:
+1. On the Raspberry Pi, run:
+```shell script
+hostname -I
+```
+
+2. Or if you're using the Pi's terminal directly:
+```shell script
+ip addr show
+```
+
+
+Remember:
+- Make sure Python is installed on your Pi (it usually is by default)
+- You don't need to install `windows-curses` on the Pi
+- Make sure all required files are transferred (`main.py`, `flightbooker.py`, and any other dependencies)
+- The terminal must support UTF-8 for the airplane emoji to display correctly
+
+Would you like me to help you with any specific part of this process?
+
+## Me
+what do I need to set up a python project in git?
+
+## AI Assistant
+I'll help you set up a Python project with Git. Here's a step-by-step guide:
+
+1. **Initialize Git Repository**
+```shell script
+git init
+```
+
+
+2. **Create a `.gitignore` file** for Python projects. I'll help you create a comprehensive one:
+
+```python
+# Create a .gitignore file with Python-specific ignores
+touch .gitignore
+```
+
+
+```plain text
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+*.env
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover
+```
+
+
+3. **Create a `requirements.txt`** to track dependencies:
+```shell script
+pip freeze > requirements.txt
+```
+
+
+4. **Create a README.md** file:
+
+```markdown
+# Your Project Name
+
+Brief description of your project.
+
+## Installation
+```
+bash
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On Unix or MacOS:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+## Usage
+```
+bash
+python main.py
+```
+## Contributing
+
+Instructions for how to contribute to your project.
+
+## License
+
+Specify your license here.
+```
+
+
+5. **Initial Commit**
+```shell script
+git add .
+git commit -m "Initial commit"
+```
+
+
+6. **Connect to Remote Repository** (after creating one on GitHub/GitLab/etc.):
+```shell script
+git remote add origin <your-repository-url>
+git branch -M main
+git push -u origin main
+```
+
+
+Optional but recommended additions:
+
+7. **Add a `setup.py`** if you want to make your project installable:
+
+```python
+from setuptools import setup, find_packages
+
+setup(
+    name="your-project-name",
+    version="0.1.0",
+    packages=find_packages(),
+    install_requires=[
+        # List your project dependencies here
+        # e.g., "requests>=2.25.1",
+    ],
+    author="Your Name",
+    author_email="your.email@example.com",
+    description="A short description of your project",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
+    url="https://github.com/yourusername/yourproject",
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
+    python_requires=">=3.6",
+)
+```
+
+
+8. **Project Structure** - Here's a recommended structure:
+```
+your-project/
+│
+├── .gitignore
+├── README.md
+├── requirements.txt
+├── setup.py
+│
+├── src/
+│   └── your_package/
+│       ├── __init__.py
+│       ├── main.py
+│       └── flightbooker.py
+│
+└── tests/
+    ├── __init__.py
+    └── test_flightbooker.py
+```
+
+
+9. **Add a License** file (choose an appropriate license for your project):
+- MIT License is popular for open-source projects
+- You can select one at https://choosealicense.com/
+
+10. **GitHub-specific files** (if using GitHub):
+- Add `.github/workflows/` for GitHub Actions (CI/CD)
+- Add `CONTRIBUTING.md` for contribution guidelines
+- Add `CODE_OF_CONDUCT.md` for community guidelines
+
+Would you like me to explain any of these steps in more detail or help you set up any specific part?
+
+## Me
+where does the .gitignore go?
+
+## AI Assistant
+The `.gitignore` file goes in the root directory of your project (the top-level directory where you ran `git init`). It should be at the same level as your main Python files and README.md.
+
+For example, if your current project structure looks like this:
+```
+your-project/
+├── main.py
+└── flightbooker.py
+```
+
+
+The `.gitignore` should go here:
+```
+your-project/
+├── .gitignore     <-- Here!
+├── main.py
+└── flightbooker.py
+```
+
+
+You can create it by:
+
+1. Using a text editor:
+```shell script
+# On Windows
+   notepad .gitignore
+
+   # On Linux/Mac
+   nano .gitignore
+   # or
+   touch .gitignore
+```
+
+
+2. Or using command line redirection:
+```shell script
+echo "venv/" > .gitignore
+   echo "__pycache__/" >> .gitignore
+```
+
+
+Make sure the filename is exactly `.gitignore` (with the dot at the start). On Windows, you might need to explicitly include the dot when creating the file, as Windows sometimes adds a hidden `.txt` extension.
+
+To verify the file is in the correct location, you can:
+- On Unix-like systems (Linux/Mac):
+```shell script
+ls -la
+```
+
+- On Windows:
+```shell script
+dir /a
+```
+
+
+You should see `.gitignore` listed among your files.
+
+## Me
+can you generate a readme? This project is for running on a raspberry pi with e-ink display
+
+## AI Assistant
+I'll create a README.md that's specific to your Raspberry Pi e-ink display project:
+
+```markdown
+# Flight Booker - Raspberry Pi E-ink Display
+
+A simple flight booking simulator designed to run on a Raspberry Pi with an e-ink display. This project creates an interactive terminal-based interface where users can simulate booking flights.
+
+## Hardware Requirements
+
+- Raspberry Pi (any model)
+- E-ink display (compatible with Raspberry Pi)
+- Power supply for Raspberry Pi
+- MicroSD card
+
+## Software Requirements
+
+- Raspberry Pi OS (formerly Raspbian)
+- Python 3.x
+- Required Python packages:
+  - `curses` (built into Python on Raspberry Pi)
+
+## Installation
+
+1. Clone this repository:
+```
+bash
+git clone <repository-url>
+cd flight-booker
+```
+2. Set up a virtual environment (optional but recommended):
+```
+bash
+python3 -m venv venv
+source venv/bin/activate
+```
+3. Install dependencies:
+```
+bash
+pip install -r requirements.txt
+```
+## Configuration
+
+1. Connect your e-ink display to the Raspberry Pi
+2. Make sure your display drivers are installed and configured
+3. Ensure you have proper permissions to access the display
+
+## Usage
+
+Run the program:
+```
+bash
+python main.py
+```
+The program will:
+1. Display a welcome message
+2. Prompt for a destination
+3. Show a booking confirmation
+
+## Development
+
+To contribute to this project:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## Troubleshooting
+
+Common issues and solutions:
+
+- If the display isn't updating, check your e-ink display connections
+- If you get permission errors, ensure you're running with appropriate privileges
+- For UTF-8 character issues, verify your terminal supports UTF-8 encoding
+
+## License
+
+[Add your chosen license here]
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+```
+
+
+Would you like me to add or modify any sections in this README? For example, we could add:
+1. More specific e-ink display setup instructions
+2. A diagram of the hardware setup
+3. More detailed configuration steps
+4. A list of compatible e-ink displays
+
+Just let me know what additional information would be most helpful!
+
+## Me
+I need it more generic as flight booker is just a plugin. There will also be a typewriter plugin and mabe a calculator or banking plugin
+
+## AI Assistant
+I'll create a more generic README that focuses on the plugin-based architecture:
+
+```markdown
+# Typewriter - A Plugin-based Terminal Application
+
+A modular terminal application designed to run on a Raspberry Pi with an e-ink display. The application features a plugin system that allows for easy extension with new functionalities.
+
+## Current Plugins
+- Flight Booker - Simulate flight bookings
+- Typewriter - Basic text input and display
+- More plugins coming soon...
+
+## Hardware Requirements
+
+- Raspberry Pi (any model)
+- E-ink display (compatible with Raspberry Pi)
+- Power supply for Raspberry Pi
+- MicroSD card
+
+## Software Requirements
+
+- Raspberry Pi OS (formerly Raspbian)
+- Python 3.x
+- Required Python packages:
+  - `curses` (built into Python on Raspberry Pi)
+
+## Installation
+
+1. Clone this repository:
+```
+bash
+git clone <repository-url>
+cd typewriter
+```
+2. Set up a virtual environment (optional but recommended):
+```
+bash
+python3 -m venv venv
+source venv/bin/activate
+```
+3. Install dependencies:
+```
+bash
+pip install -r requirements.txt
+```
+## Usage
+
+Run the main program:
+```
+bash
+python main.py
+```
+The program will:
+1. Load all available plugins
+2. Display a menu of available applications
+3. Allow you to select and run different plugins
+4. Press 'Q' to quit the application
+
+## Creating New Plugins
+
+To create a new plugin:
+
+1. Create a new Python file in the `plugins` directory
+2. Include these required elements:
+   - `name`: A string variable with the plugin's display name
+   - `run(stdscr)`: A function that takes a curses screen object as parameter
+
+Example plugin structure:
+```
+python
+import curses
+
+name = "My Plugin Name"
+
+def run(stdscr):
+    # Your plugin code here
+    pass
+```
+## Project Structure
+```
+
+typewriter/
+├── main.py          # Main application entry point
+├── plugins/
+│   ├── __init__.py  # Plugin loader
+│   ├── flightbooker.py
+│   └── typewriter.py
+└── requirements.txt
+```
+## Development
+
+To contribute to this project:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+### Plugin Development Guidelines
+- Use the curses library for terminal interaction
+- Keep plugins self-contained
+- Follow the required plugin structure
+- Test thoroughly with e-ink display
+
+## Troubleshooting
+
+Common issues and solutions:
+
+- If the display isn't updating, check your e-ink display connections
+- If you get permission errors, ensure you're running with appropriate privileges
+- For UTF-8 character issues, verify your terminal supports UTF-8 encoding
+
+## License
+
+[Add your chosen license here]
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. New plugins are especially welcome.
+```
+
+
+This README now:
+1. Focuses on the plugin architecture
+2. Provides clear instructions for creating new plugins
+3. Maintains hardware setup information
+4. Has a clearer project structure section
+
+Would you like me to expand on any section or add additional information?
+
+## Me
+I want the full file generated to paste into the project
+
+## AI Assistant
+Here's the complete content for your README.md file that you can copy and paste directly into your project:
+
+```markdown
+# Typewriter - A Plugin-based Terminal Application
+
+A modular terminal application designed to run on a Raspberry Pi with an e-ink display. The application features a plugin system that allows for easy extension with new functionalities.
+
+## Current Plugins
+- Flight Booker - Simulate flight bookings
+- Typewriter - Basic text input and display
+- More plugins coming soon...
+
+## Hardware Requirements
+
+- Raspberry Pi (any model)
+- E-ink display (compatible with Raspberry Pi)
+- Power supply for Raspberry Pi
+- MicroSD card
+
+## Software Requirements
+
+- Raspberry Pi OS (formerly Raspbian)
+- Python 3.x
+- Required Python packages:
+  - `curses` (built into Python on Raspberry Pi)
+
+## Installation
+
+1. Clone this repository:
+```
+bash
+git clone <repository-url>
+cd typewriter
+```
+2. Set up a virtual environment (optional but recommended):
+```
+bash
+python3 -m venv venv
+source venv/bin/activate
+```
+3. Install dependencies:
+```
+bash
+pip install -r requirements.txt
+```
+## Usage
+
+Run the main program:
+```bash
+python main.py
+```
+```
+
+
+The program will:
+1. Load all available plugins
+2. Display a menu of available applications
+3. Allow you to select and run different plugins
+4. Press 'Q' to quit the application
+
+## Creating New Plugins
+
+To create a new plugin:
+
+1. Create a new Python file in the `plugins` directory
+2. Include these required elements:
+   - `name`: A string variable with the plugin's display name
+   - `run(stdscr)`: A function that takes a curses screen object as parameter
+
+Example plugin structure:
+```python
+import curses
+
+name = "My Plugin Name"
+
+def run(stdscr):
+    # Your plugin code here
+    pass
+```
+
+
+## Project Structure
+```
+typewriter/
+├── main.py          # Main application entry point
+├── plugins/
+│   ├── __init__.py  # Plugin loader
+│   ├── flightbooker.py
+│   └── typewriter.py
+└── requirements.txt
+```
+
+
+## Development
+
+To contribute to this project:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+### Plugin Development Guidelines
+- Use the curses library for terminal interaction
+- Keep plugins self-contained
+- Follow the required plugin structure
+- Test thoroughly with e-ink display
+
+## Troubleshooting
+
+Common issues and solutions:
+
+- If the display isn't updating, check your e-ink display connections
+- If you get permission errors, ensure you're running with appropriate privileges
+- For UTF-8 character issues, verify your terminal supports UTF-8 encoding
+
+## License
+
+MIT License
+
+Copyright (c) [Year] [Your Name]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. New plugins are especially welcome.
+```
+```
+```
+
+
+## Me
+ok looks good. Now what files do I actually need to commit vs ignore to get this up to github?
+
+## AI Assistant
+Let me help you identify which files to commit and which to ignore. I'll first check what files you currently have in your project.Based on your project structure and the existing `.gitignore` file, here are the files you should commit to GitHub:
+
+Files to commit:
+```
+├── main.py
+├── plugins/
+│   ├── __init__.py
+│   └── flightbooker.py
+├── README.md
+├── .gitignore
+└── requirements.txt
+```
+
+
+Files/directories that will be (correctly) ignored:
+```
+├── .venv/
+├── __pycache__/
+├── plugins/__pycache__/
+└── .idea/ or .vscode/ (if present)
+```
+
+
+To commit these files:
+
+1. Make sure you've initialized git (if not already done):
+```shell script
+git init
+```
+
+
+2. Add and commit the files:
+```shell script
+git add main.py plugins/__init__.py plugins/flightbooker.py README.md .gitignore requirements.txt
+git commit -m "Initial commit"
+```
+
+
+3. If you haven't already, create a new repository on GitHub and add it as remote:
+```shell script
+git remote add origin <your-github-repo-url>
+git branch -M main
+git push -u origin main
+```
+
+
+Your `.gitignore` file looks good and already covers the important files to ignore:
+- Python cache files (`__pycache__/`)
+- Virtual environment (`venv/`, `ENV/`)
+- IDE specific files (`.idea/`, `.vscode/`)
+- Build and distribution files
+- Test coverage reports
+
+Remember to update your `requirements.txt` before committing if you've added any new dependencies. You can create/update it with:
+```shell script
+pip freeze > requirements.txt
+```
+
+
+## Me
+ok... can we verify the #file:.gitignore  is correctly ignoring anything else
+
+## AI Assistant
+I'll help verify if there are any untracked files that should be ignored. We can use git status to check this.Let me check the current state of your repository to see what files git is tracking or not tracking.To verify if `.gitignore` is working correctly, let's check for common patterns that might need to be added. Looking at your current `.gitignore` and typical Python project needs, a few additional patterns might be useful:
+
+```.gitignore (gitignore)
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover
+.pytest_cache/
+nosetests.xml
+coverage/
+
+# Logs
+*.log
+logs/
+log/
+
+# System files
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*~
+
+# Virtual environment
+.venv/
+.env/
